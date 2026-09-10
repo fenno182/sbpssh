@@ -1,0 +1,9 @@
+# top-level defaults
+ServerAliveInterval 30
+
+Include includes/*.conf
+Include missing.conf
+
+Host plain
+    HostName plain.example.com
+    User alice

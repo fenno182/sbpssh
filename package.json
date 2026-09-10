@@ -1,0 +1,30 @@
+{
+  "name": "sbpssh",
+  "version": "0.1.0",
+  "description": "A colourful, simple SSH host picker that reads your ~/.ssh/config (Includes and all)",
+  "repository": { "type": "git", "url": "https://github.com/fenno182/sbpssh.git" },
+  "homepage": "https://github.com/fenno182/sbpssh#readme",
+  "type": "module",
+  "bin": {
+    "sbpssh": "./bin/sbpssh.js"
+  },
+  "files": [
+    "bin",
+    "src"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node bin/sbpssh.js",
+    "test": "node --test test/"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "fuzzysort": "^4.0.2",
+    "ink": "^7.1.1",
+    "ink-text-input": "^6.0.0",
+    "react": "^19.3.0",
+    "smol-toml": "^1.8.0"
+  }
+}
