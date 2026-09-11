@@ -3,11 +3,8 @@
 
 import fs from 'node:fs';
 import path from 'node:path';
-import os from 'node:os';
+import { configDir as dir } from './config.js';
 
-const dir = process.env.XDG_CONFIG_HOME
-  ? path.join(process.env.XDG_CONFIG_HOME, 'sbpssh')
-  : path.join(os.homedir(), '.config', 'sbpssh');
 const file = path.join(dir, 'state.json');
 
 export function loadState() {

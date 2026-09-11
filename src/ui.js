@@ -37,11 +37,18 @@ function shortPath(p) {
   return p.startsWith(home) ? '~' + p.slice(home.length) : p;
 }
 
+// Native clipboard tools per platform, tried in order before the OSC 52 fallback.
+const CLIPBOARD_TOOLS = process.platform === 'win32' ? [['clip', []]]
+  : process.platform === 'darwin' ? [['pbcopy', []]]
+    : [['wl-copy', []], ['xclip', ['-selection', 'clipboard']], ['xsel', ['--clipboard', '--input']]];
+
 function copyToClipboard(text) {
-  try {
-    execFileSync('xclip', ['-selection', 'clipboard'], { input: text, stdio: ['pipe', 'ignore', 'ignore'] });
-    return 'xclip';
-  } catch { /* fall through */ }
+  for (const [tool, args] of CLIPBOARD_TOOLS) {
+    try {
+      execFileSync(tool, args, { input: text, stdio: ['pipe', 'ignore', 'ignore'] });
+      return tool;
+    } catch { /* try the next one */ }
+  }
   // OSC 52 — works in most modern terminals, including over ssh/tmux.
   process.stdout.write(`\x1b]52;c;${Buffer.from(text).toString('base64')}\x07`);
   return 'terminal';

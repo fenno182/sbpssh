@@ -72,7 +72,12 @@ const run = (cmd, cmdArgs) => {
   if (res.status) return { text: `${cmd} exited with code ${res.status}`, colour: 'red' };
   return null;
 };
-const pause = () => spawnSync('sh', ['-c', `printf '\\n${dim('— press enter to return —')}'; read _`], { stdio: 'inherit' });
+const isWindows = process.platform === 'win32';
+const pause = () => {
+  process.stdout.write(`\n${dim('— press enter to return —')}`);
+  if (isWindows) spawnSync('cmd', ['/c', 'pause>nul'], { stdio: 'inherit' });
+  else spawnSync('sh', ['-c', 'read _'], { stdio: 'inherit' });
+};
 
 const { runUi } = await import('../src/ui.js');
 let selected = null;
@@ -92,8 +97,9 @@ for (;;) {
   if (action.type === 'ssh') { touchRecent(state, host.name); flash = run('ssh', [...sshArgs, host.name]); }
   else if (action.type === 'sftp') { touchRecent(state, host.name); flash = run('sftp', [...sshArgs, host.name]); }
   else if (action.type === 'edit') {
-    const editor = process.env.VISUAL || process.env.EDITOR || 'vi';
-    flash = run(editor, [`+${host.line}`, host.file]);
+    // vi/vim/nano/micro all accept +LINE; notepad (the Windows fallback) doesn't.
+    const editor = process.env.VISUAL || process.env.EDITOR || (isWindows ? 'notepad' : 'vi');
+    flash = run(editor, editor.toLowerCase().includes('notepad') ? [host.file] : [`+${host.line}`, host.file]);
   } else if (action.type === 'run') {
     let failed = 0;
     for (const target of action.hosts) {

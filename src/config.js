@@ -5,9 +5,12 @@ import path from 'node:path';
 import os from 'node:os';
 import { parse } from 'smol-toml';
 
+// ~/.config/sbpssh on Linux/macOS (or $XDG_CONFIG_HOME), %APPDATA%\sbpssh on Windows.
 export const configDir = process.env.XDG_CONFIG_HOME
   ? path.join(process.env.XDG_CONFIG_HOME, 'sbpssh')
-  : path.join(os.homedir(), '.config', 'sbpssh');
+  : process.platform === 'win32' && process.env.APPDATA
+    ? path.join(process.env.APPDATA, 'sbpssh')
+    : path.join(os.homedir(), '.config', 'sbpssh');
 
 export const DEFAULTS = {
   theme: 'default',

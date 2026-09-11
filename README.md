@@ -48,9 +48,10 @@ line in `$EDITOR`; that's as far as editing goes.
 ### Requirements
 
 - **Node.js ≥ 20** (`node --version`)
-- `ssh` (and `sftp`) on your PATH
-- Optional: **tmux** for tmux mode, **xclip** for clipboard copy on X11 (it
-  falls back to the terminal's OSC 52 clipboard otherwise)
+- `ssh` (and `sftp`) on your PATH — OpenSSH on Linux/macOS/Windows
+- Linux, macOS or Windows (Windows Terminal recommended)
+- Optional: **tmux** for tmux mode. Clipboard copy uses wl-copy/xclip/xsel,
+  pbcopy or clip.exe, falling back to the terminal's OSC 52 clipboard
 
 ### Option A — clone and symlink (recommended)
 
@@ -81,6 +82,34 @@ npm install -g github:fenno182/sbpssh
 ```
 
 If that fails with `EACCES`, use option A rather than `sudo`.
+
+### Windows (PowerShell)
+
+Works in **Windows Terminal** with PowerShell 7 or 5.1. It uses the built-in
+OpenSSH client and reads `C:\Users\<you>\.ssh\config`, Includes and all.
+
+```powershell
+winget install OpenJS.NodeJS.LTS Git.Git    # skip whichever you already have
+```
+
+Open a new terminal so `node`/`npm` are on the PATH, then:
+
+```powershell
+npm install -g github:fenno182/sbpssh
+sbpssh
+```
+
+Notes:
+
+- If PowerShell refuses to run `sbpssh` with an *execution policy* error, either
+  run `sbpssh.cmd` instead, or allow local scripts once:
+  `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`.
+- Use Windows Terminal rather than the legacy console window — the old
+  `conhost` doesn't render the box drawing / colours / mouse properly.
+- `e` opens files in Notepad unless `$env:EDITOR` is set (e.g. `code -g` or `micro`).
+- Settings live in `%APPDATA%\sbpssh\` (`config.toml`, `state.json`).
+- tmux mode is inert on Windows; connections run inline.
+- Update with `npm update -g sbpssh`.
 
 ### Uninstall
 
